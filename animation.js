@@ -229,24 +229,16 @@ class Ball {
     }
 }
 
-// Modify the colors array to only use white for volleyballs
-const colors = Array(5).fill('white');
+// Create fewer balls with larger radius
+const numberOfBalls = 6;
+const radius = 30; // Larger radius for better visibility
 const balls = [];
 
-// Create the original colored balls
-for (let i = 0; i < colors.length; i++) {
-    const radius = 20;
+// Create the volleyballs
+for (let i = 0; i < numberOfBalls; i++) {
     const x = Math.random() * (canvas.width - radius * 2) + radius;
     const y = Math.random() * (canvas.height - radius * 2) + radius;
-    balls.push(new Ball(x, y, radius, colors[i]));
-}
-
-// Add four more green balls
-for (let i = 0; i < 4; i++) {
-    const radius = 20;
-    const x = Math.random() * (canvas.width - radius * 2) + radius;
-    const y = Math.random() * (canvas.height - radius * 2) + radius;
-    balls.push(new Ball(x, y, radius, 'green'));
+    balls.push(new Ball(x, y, radius, 'white'));
 }
 
 // Animation loop
