@@ -50,7 +50,7 @@ class Ball {
     }
 
     setSpeedForColor(color) {
-        const baseSpeed = 4.5; // Increased by 50% from 3
+        const baseSpeed = 9; // Doubled from 4.5 to 9
         this.dx = (Math.random() - 0.5) * baseSpeed;
         this.dy = (Math.random() - 0.5) * baseSpeed;
     }
@@ -130,10 +130,9 @@ class Ball {
     }
 
     createParticles() {
-        // Create more particles after collision
-        const particleCount = (
-            Math.abs(this.dx) + Math.abs(this.dy) > 5 ? 6 : 3
-        );
+        // Create more particles at higher speeds
+        const speed = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+        const particleCount = speed > 10 ? 8 : 4; // Increased particle count for higher speeds
         for (let i = 0; i < particleCount; i++) {
             this.particles.push(new Particle(this.x, this.y, this.color));
         }
@@ -209,20 +208,20 @@ class Ball {
         // Check wall collisions before moving
         if (nextX - this.radius < 0) {
             this.x = this.radius;
-            this.dx = Math.abs(this.dx) * 0.85; // Add some energy loss
+            this.dx = Math.abs(this.dx) * 0.9; // Reduced energy loss for more speed retention
         } else if (nextX + this.radius > canvas.width) {
             this.x = canvas.width - this.radius;
-            this.dx = -Math.abs(this.dx) * 0.85;
+            this.dx = -Math.abs(this.dx) * 0.9;
         } else {
             this.x = nextX;
         }
 
         if (nextY - this.radius < 0) {
             this.y = this.radius;
-            this.dy = Math.abs(this.dy) * 0.85;
+            this.dy = Math.abs(this.dy) * 0.9;
         } else if (nextY + this.radius > canvas.height) {
             this.y = canvas.height - this.radius;
-            this.dy = -Math.abs(this.dy) * 0.85;
+            this.dy = -Math.abs(this.dy) * 0.9;
         } else {
             this.y = nextY;
         }
