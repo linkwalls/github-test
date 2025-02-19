@@ -50,16 +50,9 @@ class Ball {
     }
 
     setSpeedForColor(color) {
-        const baseSpeed = 3; // Reduced from 6 to 3 for slower movement
-        const purpleSpeedMultiplier = 1.5; // Reduced from 2 to 1.5 for slower purple balls
-        
-        if (color === 'purple') {
-            this.dx = (Math.random() - 0.5) * baseSpeed * purpleSpeedMultiplier;
-            this.dy = (Math.random() - 0.5) * baseSpeed * purpleSpeedMultiplier;
-        } else {
-            this.dx = (Math.random() - 0.5) * baseSpeed;
-            this.dy = (Math.random() - 0.5) * baseSpeed;
-        }
+        const baseSpeed = 4.5; // Increased by 50% from 3
+        this.dx = (Math.random() - 0.5) * baseSpeed;
+        this.dy = (Math.random() - 0.5) * baseSpeed;
     }
 
     changeColor() {
@@ -107,21 +100,29 @@ class Ball {
 
         // Draw the volleyball pattern
         ctx.strokeStyle = '#333';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1;
 
-        // Draw the main curved lines that form the volleyball pattern
-        // First curved line (horizontal)
+        // Main curved lines
+        // Center curve
         ctx.beginPath();
-        ctx.moveTo(-this.radius, 0);
-        ctx.quadraticCurveTo(0, this.radius * 0.6, this.radius, 0);
-        ctx.quadraticCurveTo(0, -this.radius * 0.6, -this.radius, 0);
+        ctx.moveTo(-this.radius * 0.7, -this.radius * 0.2);
+        ctx.quadraticCurveTo(0, -this.radius * 0.8, this.radius * 0.7, -this.radius * 0.2);
         ctx.stroke();
 
-        // Second curved line (vertical)
         ctx.beginPath();
-        ctx.moveTo(0, -this.radius);
-        ctx.quadraticCurveTo(this.radius * 0.6, 0, 0, this.radius);
-        ctx.quadraticCurveTo(-this.radius * 0.6, 0, 0, -this.radius);
+        ctx.moveTo(-this.radius * 0.7, this.radius * 0.2);
+        ctx.quadraticCurveTo(0, this.radius * 0.8, this.radius * 0.7, this.radius * 0.2);
+        ctx.stroke();
+
+        // Side curves
+        ctx.beginPath();
+        ctx.moveTo(-this.radius * 0.15, -this.radius);
+        ctx.quadraticCurveTo(-this.radius * 0.5, 0, -this.radius * 0.15, this.radius);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(this.radius * 0.15, -this.radius);
+        ctx.quadraticCurveTo(this.radius * 0.5, 0, this.radius * 0.15, this.radius);
         ctx.stroke();
 
         // Restore context state
@@ -129,7 +130,11 @@ class Ball {
     }
 
     createParticles() {
-        for (let i = 0; i < 3; i++) {
+        // Create more particles after collision
+        const particleCount = (
+            Math.abs(this.dx) + Math.abs(this.dy) > 5 ? 6 : 3
+        );
+        for (let i = 0; i < particleCount; i++) {
             this.particles.push(new Particle(this.x, this.y, this.color));
         }
     }
@@ -230,28 +235,28 @@ class Ball {
     }
 }
 
-// Create just one ball
-const radius = 40; // Slightly larger for better pattern visibility
+// Create just one ball with reduced size
+const radius = 30; // Reduced by 25% from 40
 const balls = [];
-const x = canvas.width / 4; // Start at 1/4 of the width
+const x = canvas.width / 4;
 const y = canvas.height / 2;
 balls.push(new Ball(x, y, radius, 'white'));
 
 // Animation loop
 function animate() {
-    // Clear canvas with sand color
-    ctx.fillStyle = 'rgba(228, 193, 92, 0.2)';
+    // Clear canvas with sand color (reduced opacity for longer trails)
+    ctx.fillStyle = 'rgba(228, 193, 92, 0.1)'; // Reduced opacity for longer trails
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw the net
     ctx.beginPath();
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 3;
-    ctx.setLineDash([10, 5]); // Create dashed line for net effect
+    ctx.setLineDash([10, 5]);
     ctx.moveTo(canvas.width / 2, 0);
     ctx.lineTo(canvas.width / 2, canvas.height);
     ctx.stroke();
-    ctx.setLineDash([]); // Reset line dash
+    ctx.setLineDash([]);
 
     // Update ball
     balls.forEach(ball => ball.update());
