@@ -96,27 +96,35 @@ class Ball {
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = 'white';
         ctx.fill();
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.stroke();
         ctx.closePath();
 
-        // Draw volleyball pattern lines
-        ctx.beginPath();
-        // Curved lines for volleyball pattern
+        // Save current context state
+        ctx.save();
+        ctx.translate(this.x, this.y);
+
+        // Draw the volleyball pattern
         ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5;
 
-        // First curved line (horizontal)
-        ctx.beginPath();
-        ctx.moveTo(this.x - this.radius, this.y);
-        ctx.quadraticCurveTo(this.x, this.y + this.radius * 0.5, this.x + this.radius, this.y);
-        ctx.quadraticCurveTo(this.x, this.y - this.radius * 0.5, this.x - this.radius, this.y);
-        ctx.stroke();
+        // Draw six curved segments
+        for (let i = 0; i < 6; i++) {
+            ctx.beginPath();
+            ctx.rotate(Math.PI / 3); // Rotate by 60 degrees
+            // Draw curved line from top to bottom
+            ctx.moveTo(0, -this.radius);
+            ctx.bezierCurveTo(
+                this.radius * 0.5, -this.radius * 0.5,
+                this.radius * 0.5, this.radius * 0.5,
+                0, this.radius
+            );
+            ctx.stroke();
+        }
 
-        // Second curved line (vertical)
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y - this.radius);
-        ctx.quadraticCurveTo(this.x + this.radius * 0.5, this.y, this.x, this.y + this.radius);
-        ctx.quadraticCurveTo(this.x - this.radius * 0.5, this.y, this.x, this.y - this.radius);
-        ctx.stroke();
+        // Restore context state
+        ctx.restore();
     }
 
     createParticles() {
@@ -184,10 +192,6 @@ class Ball {
             this.y += correctionY;
             otherBall.x -= correctionX;
             otherBall.y -= correctionY;
-
-            // Change colors on collision
-            this.changeColor();
-            otherBall.changeColor();
         }
     }
 
@@ -200,11 +204,9 @@ class Ball {
         if (nextX - this.radius < 0) {
             this.x = this.radius;
             this.dx = Math.abs(this.dx) * 0.85; // Add some energy loss
-            this.changeColor();
         } else if (nextX + this.radius > canvas.width) {
             this.x = canvas.width - this.radius;
             this.dx = -Math.abs(this.dx) * 0.85;
-            this.changeColor();
         } else {
             this.x = nextX;
         }
@@ -212,11 +214,9 @@ class Ball {
         if (nextY - this.radius < 0) {
             this.y = this.radius;
             this.dy = Math.abs(this.dy) * 0.85;
-            this.changeColor();
         } else if (nextY + this.radius > canvas.height) {
             this.y = canvas.height - this.radius;
             this.dy = -Math.abs(this.dy) * 0.85;
-            this.changeColor();
         } else {
             this.y = nextY;
         }
@@ -251,7 +251,7 @@ for (let i = 0; i < 4; i++) {
 
 // Animation loop
 function animate() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillStyle = 'rgba(228, 193, 92, 0.2)'; // Light sand color with transparency
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Update all balls
