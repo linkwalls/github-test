@@ -109,19 +109,20 @@ class Ball {
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 1.5;
 
-        // Draw six curved segments
-        for (let i = 0; i < 6; i++) {
-            ctx.beginPath();
-            ctx.rotate(Math.PI / 3); // Rotate by 60 degrees
-            // Draw curved line from top to bottom
-            ctx.moveTo(0, -this.radius);
-            ctx.bezierCurveTo(
-                this.radius * 0.5, -this.radius * 0.5,
-                this.radius * 0.5, this.radius * 0.5,
-                0, this.radius
-            );
-            ctx.stroke();
-        }
+        // Draw the main curved lines that form the volleyball pattern
+        // First curved line (horizontal)
+        ctx.beginPath();
+        ctx.moveTo(-this.radius, 0);
+        ctx.quadraticCurveTo(0, this.radius * 0.6, this.radius, 0);
+        ctx.quadraticCurveTo(0, -this.radius * 0.6, -this.radius, 0);
+        ctx.stroke();
+
+        // Second curved line (vertical)
+        ctx.beginPath();
+        ctx.moveTo(0, -this.radius);
+        ctx.quadraticCurveTo(this.radius * 0.6, 0, 0, this.radius);
+        ctx.quadraticCurveTo(-this.radius * 0.6, 0, 0, -this.radius);
+        ctx.stroke();
 
         // Restore context state
         ctx.restore();
@@ -229,32 +230,31 @@ class Ball {
     }
 }
 
-// Create fewer balls with larger radius
-const numberOfBalls = 6;
-const radius = 30; // Larger radius for better visibility
+// Create just one ball
+const radius = 40; // Slightly larger for better pattern visibility
 const balls = [];
-
-// Create the volleyballs
-for (let i = 0; i < numberOfBalls; i++) {
-    const x = Math.random() * (canvas.width - radius * 2) + radius;
-    const y = Math.random() * (canvas.height - radius * 2) + radius;
-    balls.push(new Ball(x, y, radius, 'white'));
-}
+const x = canvas.width / 4; // Start at 1/4 of the width
+const y = canvas.height / 2;
+balls.push(new Ball(x, y, radius, 'white'));
 
 // Animation loop
 function animate() {
-    ctx.fillStyle = 'rgba(228, 193, 92, 0.2)'; // Light sand color with transparency
+    // Clear canvas with sand color
+    ctx.fillStyle = 'rgba(228, 193, 92, 0.2)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Update all balls
-    balls.forEach(ball => ball.update());
+    // Draw the net
+    ctx.beginPath();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 5]); // Create dashed line for net effect
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset line dash
 
-    // Check collisions between all pairs of balls
-    for (let i = 0; i < balls.length; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-            balls[i].checkCollision(balls[j]);
-        }
-    }
+    // Update ball
+    balls.forEach(ball => ball.update());
 
     requestAnimationFrame(animate);
 }
