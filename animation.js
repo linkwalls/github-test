@@ -25,23 +25,15 @@ class Particle {
     }
 
     draw() {
-        ctx.fillStyle = `rgba(${this.getFlameColor()}, ${this.life})`;
+        ctx.fillStyle = `rgba(${this.getFlameColor()}, ${this.life * 0.3})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
     }
 
     getFlameColor() {
-        if (this.color === 'red') return '255, 0, 0';
-        if (this.color === 'blue') return '30, 144, 255';
-        if (this.color === 'green') return '50, 205, 50';
-        if (this.color === 'orange') return '255, 165, 0';
-        if (this.color === 'white') return '255, 255, 255';
-        if (this.color === 'purple') return '147, 112, 219';
-        if (this.color === 'yellow') return '255, 255, 0';
-        if (this.color === 'cyan') return '0, 255, 255';
-        if (this.color === 'magenta') return '255, 0, 255';
-        return '255, 165, 0';
+        // Return a light gray color for volleyball trails
+        return '200, 200, 200';
     }
 }
 
@@ -99,11 +91,32 @@ class Ball {
     }
 
     draw() {
+        // Draw the base white ball
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = 'white';
         ctx.fill();
         ctx.closePath();
+
+        // Draw volleyball pattern lines
+        ctx.beginPath();
+        // Curved lines for volleyball pattern
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+
+        // First curved line (horizontal)
+        ctx.beginPath();
+        ctx.moveTo(this.x - this.radius, this.y);
+        ctx.quadraticCurveTo(this.x, this.y + this.radius * 0.5, this.x + this.radius, this.y);
+        ctx.quadraticCurveTo(this.x, this.y - this.radius * 0.5, this.x - this.radius, this.y);
+        ctx.stroke();
+
+        // Second curved line (vertical)
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y - this.radius);
+        ctx.quadraticCurveTo(this.x + this.radius * 0.5, this.y, this.x, this.y + this.radius);
+        ctx.quadraticCurveTo(this.x - this.radius * 0.5, this.y, this.x, this.y - this.radius);
+        ctx.stroke();
     }
 
     createParticles() {
@@ -216,8 +229,8 @@ class Ball {
     }
 }
 
-// Create balls
-const colors = ['red', 'blue', 'green', 'orange', 'white'];
+// Modify the colors array to only use white for volleyballs
+const colors = Array(5).fill('white');
 const balls = [];
 
 // Create the original colored balls
